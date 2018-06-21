@@ -8,6 +8,8 @@ use gust::frontend::write::render_graph;
 use gust::backend::general::FileType;
 use gust::backend::traits::Graphable;
 
+pub mod timecop_data_transformer;
+
 pub enum ScaleType {
     LOG2,
     LOG10,
@@ -27,7 +29,19 @@ pub fn draw_using_gust(data: &Vec<Vec<i64>>, scale: ScaleType) {
     render_graph(&b, FileType::HTML).unwrap();
 }
 
-pub fn get_vega_chart_json(data: &Vec<Vec<i64>>, scale: ScaleType) -> String {
+pub fn get_chart_json(datapoints: &Vec<timecop_data_transformer::DataPoint>, scale: ScaleType) -> String {
+    let mut b = LineChart::new();
+
+    for (i, datapoint) in datapoints.iter().enumerate() {
+        b.add_data(datapoint.ts_ms, get_scaled_value(datapoint.mono_drift_usps, &scale), 0);
+        b.add_data(datapoint.ts_ms, get_scaled_value(datapoint.sched_us, &scale), 1);
+        b.add_data(datapoint.ts_ms, get_scaled_value(datapoint.wallclock_drift_usps, &scale), 2);
+    }
+    let graph_json = b.get_json_representation();
+    customise_chart_json(&graph_json)
+}
+
+pub fn get_vega_chart_json_for_sample_data(data: &Vec<Vec<i64>>, scale: ScaleType) -> String {
 
     let mut b = LineChart::new();
 
@@ -48,7 +62,7 @@ fn customise_chart_json(graph_json: &String) -> String {
 fn convert_to_step_graph(graph_json: &String) -> String {
     let mut value: Value = serde_json::from_str(&graph_json).unwrap();
     println!("old type: {:?}", value.pointer("/scales/1/type"));
-    *value.pointer_mut("/scales/1/type").unwrap() = "step".into();
+//    *value.pointer_mut("/scales/1/type").unwrap() = "step".into(); TODO
     println!("new type: {}", value["scales"][1]["type"]);
     value.to_string()
 }
