@@ -1,0 +1,9 @@
+[package]
+name = "draw-charts"
+version = "0.1.0"
+authors = ["Sunil Bandla <sbandla@thousandeyes.com>"]
+
+[dependencies]
+regex = "0.2"
+gust = "0.1.4"
+rand = "0.5.2"
