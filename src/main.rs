@@ -1,32 +1,25 @@
 extern crate rand;
 use rand::Rng;
 
-extern crate gust;
-use gust::backend::line_chart::LineChart;
-use gust::frontend::write::render_graph;
-use gust::backend::general::FileType;
+extern crate draw_charts;
 
 fn main() {
-    draw_using_gust()
+    let data = generate_data();
+    draw_charts::draw_using_gust(&data)
 }
 
-fn draw_using_gust() {
-    
+fn generate_data() -> Vec<Vec<i64>> {
+
+    const LINES_COUNT: i32 = 4;
     let mut rng = rand::thread_rng();
-    let mut b = LineChart::new();
-
-    for l in 1..4 {
-        let numbers: Vec<i64>
-            = (0..20)
+    let data = (1..LINES_COUNT)
+        .map(|_| {
+            (0..20)
                 .map(|_| {
-                    rng.gen_range(5, 15)
+                    rng.gen_range(5, 15) as i64
                 })
-                .collect();
-
-        for (i, n) in numbers.iter().enumerate() {
-            // println!("In position {} we have value {}", i, n);
-            b.add_data(i as i64, *n, l);
-        }
-    }
-    render_graph(&b, FileType::HTML).unwrap();
+                .collect()
+        })
+        .collect();
+    return data;
 }
