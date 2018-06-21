@@ -2,6 +2,7 @@ extern crate gust;
 use gust::backend::line_chart::LineChart;
 use gust::frontend::write::render_graph;
 use gust::backend::general::FileType;
+use gust::backend::traits::Graphable;
 
 pub enum ScaleType {
     LOG2,
@@ -20,6 +21,18 @@ pub fn draw_using_gust(data: &Vec<Vec<i64>>, scale: ScaleType) {
         }
     }
     render_graph(&b, FileType::HTML).unwrap();
+}
+
+pub fn get_vega_chart_json(data: &Vec<Vec<i64>>, scale: ScaleType) -> String {
+
+    let mut b = LineChart::new();
+
+    for (l, numbers) in data.iter().enumerate() {
+        for (i, n) in numbers.iter().enumerate() {
+            b.add_data(i as i64, get_scaled_value(*n, &scale), l as i64);
+        }
+    }
+    b.get_json_representation()
 }
 
 fn get_scaled_value(value: i64, scale: &ScaleType) -> i64 {

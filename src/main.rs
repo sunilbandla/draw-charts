@@ -5,6 +5,8 @@ extern crate draw_charts;
 
 fn main() {
     let data = generate_data();
+    let json = draw_charts::get_vega_chart_json(&data, draw_charts::ScaleType::LOG2);
+    println!("Chart JSON {:?}", json);
     draw_charts::draw_using_gust(&data, draw_charts::ScaleType::LOG2)
 }
 
