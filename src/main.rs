@@ -5,7 +5,7 @@ extern crate draw_charts;
 
 fn main() {
     let data = generate_data();
-    draw_charts::draw_using_gust(&data)
+    draw_charts::draw_using_gust(&data, draw_charts::ScaleType::LOG2)
 }
 
 fn generate_data() -> Vec<Vec<i64>> {
