@@ -1,4 +1,8 @@
 extern crate gust;
+extern crate serde;
+extern crate serde_json;
+
+use serde_json::{Value};
 use gust::backend::line_chart::LineChart;
 use gust::frontend::write::render_graph;
 use gust::backend::general::FileType;
@@ -32,7 +36,21 @@ pub fn get_vega_chart_json(data: &Vec<Vec<i64>>, scale: ScaleType) -> String {
             b.add_data(i as i64, get_scaled_value(*n, &scale), l as i64);
         }
     }
-    b.get_json_representation()
+    let graph_json = b.get_json_representation();
+    customise_chart_json(&graph_json)
+}
+
+fn customise_chart_json(graph_json: &String) -> String {
+    let json = convert_to_step_graph(graph_json);
+    return json;
+}
+
+fn convert_to_step_graph(graph_json: &String) -> String {
+    let mut value: Value = serde_json::from_str(&graph_json).unwrap();
+    println!("old type: {:?}", value.pointer("/scales/1/type"));
+    *value.pointer_mut("/scales/1/type").unwrap() = "step".into();
+    println!("new type: {}", value["scales"][1]["type"]);
+    value.to_string()
 }
 
 fn get_scaled_value(value: i64, scale: &ScaleType) -> i64 {
