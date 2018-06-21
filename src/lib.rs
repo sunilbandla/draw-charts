@@ -61,9 +61,9 @@ fn customise_chart_json(graph_json: &String) -> String {
 
 fn convert_to_step_graph(graph_json: &String) -> String {
     let mut value: Value = serde_json::from_str(&graph_json).unwrap();
-    println!("old type: {:?}", value.pointer("/scales/1/type"));
-//    *value.pointer_mut("/scales/1/type").unwrap() = "step".into(); TODO
-    println!("new type: {}", value["scales"][1]["type"]);
+    println!("old type: {:?}", value.pointer("/signals/0/value"));
+    *value.pointer_mut("/signals/0/value").unwrap() = "step".into();
+    println!("new type: {}", value["signals"][0]["value"]);
     value.to_string()
 }
 
