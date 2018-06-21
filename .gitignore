@@ -1,3 +1,6 @@
 /gust_build
 /target
 **/*.rs.bk
+
+
+/.idea
